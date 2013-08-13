@@ -38,3 +38,7 @@ nosetests.xml
 /logs
 /static
 /database
+
+# Debug launch scripts
+/local_launch.sh
+
