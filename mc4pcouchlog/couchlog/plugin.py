@@ -23,35 +23,37 @@ class CouchLogPlugin(MC4Plugin):
               }
     
     def default_handler(self, msg, source):
-        e = RawEvent()
-        if source == 'server':
-            e.direction = 's2c'
-            msgs = srv_msgs
-        elif source == 'client':
-            e.direction = 'c2s'
-            msgs = cli_msgs
-        else:
-            e.direction = 'other'
-        
-        e.eventType = msg['msgtype']
         try:
-            et=msgs[msg['msgtype']]
-            e.eventTypeName=et.name
-        except ValueError,e:
-            e.eventTypeName=None
-        
-        e.rawBytes = msg['raw_bytes']
-        e.occured = datetime.datetime.utcnow()
-        
-        try:
-            for k,v in msg.iteritems():
-                try:
-                    if k not in self.IGNORE:
-                        e.otherAttrs[k] = v
-                except Exception, e:
-                    log.exception("Error while setting other args %r:%r", k, v)
-        except Exception,e:
-            log.exception("Error while gathering args from %r/%r",msg,source)
+            e = RawEvent()
+            if source == 'server':
+                e.direction = 's2c'
+                msgs = srv_msgs
+            elif source == 'client':
+                e.direction = 'c2s'
+                msgs = cli_msgs
+            else:
+                e.direction = 'other'
 
-        e.save()
-        return True
+            e.eventType = msg['msgtype']
+            try:
+                et = msgs[msg['msgtype']]
+                e.eventTypeName = et.name
+            except ValueError, e:
+                e.eventTypeName = None
+
+            e.rawBytes = msg['raw_bytes']
+            e.occured = datetime.datetime.utcnow()
+
+            try:
+                for k, v in msg.iteritems():
+                    try:
+                        if k not in self.IGNORE:
+                            e.otherAttrs[k] = v
+                    except Exception, e:
+                        log.exception("Error while setting other args %r:%r", k, v)
+            except Exception, e:
+                log.exception("Error while gathering args from %r/%r", msg, source)
+
+            e.save()
+        finally:
+            return True
