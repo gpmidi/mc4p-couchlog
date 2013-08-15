@@ -18,7 +18,7 @@ from couchlog.models import *
 
 class CouchLogPlugin(MC4Plugin):
     IGNORE = {
-              'mgstype':True,
+              'msgtype':True,
               'raw_bytes':True,
               }
     
